@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<title>Twitter-{% block title%}index{% endblock title%}</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet">
+</head>
+<body>
+
+{%block navbar %}
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="/">Myyoutube</a>
+  </div>
+</div>
+{%endblock navbar%}
+<div class="container well">
+
+
+{% block body %}
+
+
+
+
+{% endblock body%} 
+
+</div>
+<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+
+{% block script %}
+
+{% endblock script%}
+{% for message in get_flashed_messages() %}
+<div class=flash>{{ message }}</div>
+{% endfor %}
+
+
+
+</body>
+</html>
+
+

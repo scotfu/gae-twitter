@@ -1,0 +1,19 @@
+application: sf-twitter
+version: 1
+runtime: python27
+api_version :1
+threadsafe: true
+
+
+libraries:
+- name:jinja2
+  version:"2.6"
+- name:markupsafe
+  version:"0.15"
+
+inbound_services:
+- warmup
+
+handlers:
+- url:.*
+  script:run.application.app
