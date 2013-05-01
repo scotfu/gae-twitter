@@ -9,5 +9,7 @@ class Tweet(db.Model):
     from_user_name= db.StringProperty()
     created_at = db.StringProperty()
     loation = db.StringProperty()
-
-    '''
+    key_word= db.StringProperty()
+    image=db.StringProperty()
+    weight=db.IntegerProperty()
+'''

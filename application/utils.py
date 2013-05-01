@@ -19,7 +19,7 @@ TWITTER_URL='http://search.twitter.com/search.json?'
 
  
 # AFINN-111 is as of June 2011 the most recent version of AFINN
-filenameAFINN = DIR+'AFINN/AFINN-111.txt'
+filenameAFINN = DIR+'/AFINN/AFINN-111.txt'
 afinn = dict(map(lambda (w, s): (w, int(s)), [ws.strip().split('\t') for ws in open(filenameAFINN) ]))
  
 # Word splitter pattern
@@ -48,9 +48,7 @@ def search(key_word,location):
     data = json.loads(geocode)
     lat = data['results'][0]['geometry']['location']['lat']
     lng = data['results'][0]['geometry']['location']['lng']
-    print lat,lng
-
-    parameters = {'q':str(key_word),'geocode':','.join([str(lat),str(lng),'10mi']), 'result_type':'mixed','rpp':'100'}
+    parameters = {'q':str(key_word),'geocode':','.join([str(lat),str(lng),'10mi']), 'result_type':'mixed','rpp':'1000'}
     parameters = urllib.urlencode(parameters)
     tweets= json.loads(urllib2.urlopen(TWITTER_URL+parameters).read())['results']
     return tweets
@@ -63,7 +61,7 @@ def count_word(tweets):
                 word_dict[word]+=1
             except:
                 word_dict[word]=1
-    del word_dict[""]
+#    del word_dict[""]
     return word_dict
 
 
@@ -76,6 +74,7 @@ def get_top_ten(tweets,word_dict):
         
     tweets.sort(key=lambda tweet: tweet['quan'],reverse=True)
     return tweets[:10]
+
 if __name__ =='__main__':
     tweets=search('sports','NEW York')
     pprint.pprint([tweet.get('quan') for tweet in get_top_ten(tweets,count_word(tweets))])

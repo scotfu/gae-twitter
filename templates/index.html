@@ -8,12 +8,12 @@
 
 <div>
 
-
+<form action="/action/" method="post">
 <label>Word: <input type="text" name="key_word" id="key_word"></label>
 <br/>
 <label>Location: <input type="text" name="location" id="location"></label>
 </br>
-<button class="btn" id="s1">Search</button>
+<button class="btn" id="s2" type="submit">Search</button>
     </form>
 
 <div id="result">
@@ -25,6 +25,7 @@
 $("#s1").click(function() {
 $.post('/action/',{'location':$("#location").val(),'key_word':$("#key_word").val()}, function(data) {
   data=$.parseJSON(data);
+alert(data);
   $("#result").html(data);
 });
 });

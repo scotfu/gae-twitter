@@ -1,0 +1,23 @@
+{% extends 'layout.html'%}
+{% block title %}{{key_word}}{% endblock title%}
+{% block body %}
+
+
+<div class="offset2">
+
+<div class="page-header" >
+  <h3>{{key_word}}</h3>
+</div>
+
+<div class="span10">
+{% for tweet in tweets %}
+{{tweet.text}}<br/>
+{% endfor %}
+</div>
+
+</div>
+
+{% endblock body %}
+{% block script %}
+
+{% endblock script %}
