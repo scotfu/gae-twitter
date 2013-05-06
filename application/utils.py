@@ -8,7 +8,11 @@ import re
 import pdb
 import sys
 import os
+import math
+import time
+from collections import OrderedDict
 
+from . import app
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -42,38 +46,68 @@ def sentiment(text):
     return sentiment
  
 def search(key_word,location):
+    tweets=[]
     parameters = {'address':location,'sensor':'false'}
     parameters = urllib.urlencode(parameters)
-    geocode = urllib2.urlopen(MAP_URL+parameters).read()
+    geo_success = False
+    while not geo_success:
+        try:
+            geocode = urllib2.urlopen(MAP_URL+parameters).read()
+            geo_success = True
+        except:
+            pass
+        
     data = json.loads(geocode)
     lat = data['results'][0]['geometry']['location']['lat']
     lng = data['results'][0]['geometry']['location']['lng']
-    parameters = {'q':str(key_word),'geocode':','.join([str(lat),str(lng),'10mi']), 'result_type':'mixed','rpp':'1000'}
-    parameters = urllib.urlencode(parameters)
-    tweets= json.loads(urllib2.urlopen(TWITTER_URL+parameters).read())['results']
+    p=1
+    while p < (app.config.get('PAGE')+1):
+        parameters = {'q':str(key_word),'geocode':','.join([str(lat),str(lng),'10mi']), 'result_type':'mixed','rpp':'100','page':p}
+        parameters = urllib.urlencode(parameters)
+        try:
+            tweets.extend(json.loads(urllib2.urlopen(TWITTER_URL+parameters).read())['results'])
+            p+=1
+            time.sleep(0.0001)
+        except:
+            pass
     return tweets
 
 def count_word(tweets):
     word_dict={}
     for tweet in tweets:
-        for word in pattern_split.split(tweet['text'].lower()):
-            try:
-                word_dict[word]+=1
-            except:
-                word_dict[word]=1
-#    del word_dict[""]
-    return word_dict
+        for word in tweet['text'].lower().strip().split():
+            if len(word)>3:
+                try:
+                    word_dict[word]+=1
+                except:
+                    word_dict[word]=1
+    try:            
+        del word_dict[' ']
+        del word_dict['']
+    except:
+        pass
+    word_dict_sorted_by_value = OrderedDict(sorted(word_dict.items(), key=lambda x: x[1]))
+    return word_dict_sorted_by_value
 
 
 def get_top_ten(tweets,word_dict):
+    top_ten=[]
     for tweet in tweets:
         tweet['quan']=0
         for word in tweet['text'].lower().split():
             tweet['quan']+=word_dict.get(word,0)
-        tweet['quan']=tweet['quan']/len(tweet['text'].lower().split())
+        tweet['quan']=tweet['quan']/math.sqrt(len(tweet['text'].lower().split()))
         
     tweets.sort(key=lambda tweet: tweet['quan'],reverse=True)
-    return tweets[:10]
+    count=0
+    for tweet in tweets:
+        if count <11:
+            if tweet['text'] not in [t['text'] for t in top_ten]:
+                top_ten.append(tweet)
+                count+=1
+        else:
+            break
+    return top_ten     
 
 if __name__ =='__main__':
     tweets=search('sports','NEW York')

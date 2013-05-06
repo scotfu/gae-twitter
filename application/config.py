@@ -16,7 +16,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-
+    PAGE = 10
 
 class TestingConfig(Config):
     TESTING = True

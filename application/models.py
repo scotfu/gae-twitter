@@ -1,6 +1,6 @@
 # /usr/env python
 #-*- coding:utf8 -*-
-'''
+
 from google.appengine.ext import db
 
 class Tweet(db.Model):
@@ -11,5 +11,5 @@ class Tweet(db.Model):
     loation = db.StringProperty()
     key_word= db.StringProperty()
     image=db.StringProperty()
-    weight=db.IntegerProperty()
-'''
+    weight=db.FloatProperty()
+
