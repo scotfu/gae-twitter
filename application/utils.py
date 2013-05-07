@@ -54,7 +54,8 @@ def search(key_word,location):
         try:
             geocode = urllib2.urlopen(MAP_URL+parameters).read()
             geo_success = True
-        except:
+        except Exception,e:
+#            print e
             pass
         
     data = json.loads(geocode)
@@ -67,8 +68,9 @@ def search(key_word,location):
         try:
             tweets.extend(json.loads(urllib2.urlopen(TWITTER_URL+parameters).read())['results'])
             p+=1
-            time.sleep(0.0001)
-        except:
+            time.sleep(0.000001)
+        except Exception,e:
+#            print e
             pass
     return tweets
 

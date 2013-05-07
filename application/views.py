@@ -13,8 +13,10 @@ from werkzeug import secure_filename
 from flask import make_response
 from flask import render_template
 from . import app
-from .models import Tweet
+from .models import Tweet,Search,HighHit,HittoTweet
 from .utils import *
+
+
 
 @app.route('/',methods=['GET','POST'])
 def index():
@@ -23,24 +25,32 @@ def index():
 
 @app.route('/action/',methods=['GET','POST'])
 def action():
-    q=Tweet.all()    
+    q=Search.all()    
     if request.method == 'POST':
-        location=request.form['location']
+        location=request.form['location'].lower()
         key_word=request.form['key_word'].lower()
-        if q.filter('key_word',key_word).count():
-            q.order('-weight')
-            return result(tweets=q,key_word=key_word)
-    
+        q.filter('key_word',key_word)
+        q.filter('location',location)
+        if q.count():
+            return result(q.get(),test_x=10000)
+        s=Search()
+        s.key_word=key_word
+        s.location=location
+        s.put()
+        
         tweets = search(key_word,location)    
         word_dict=count_word(tweets)
         w=word_dict
-        high_hits=[]
+#        print w
         n=0
-        while n< 4:
-            pass
-            #high_hits.append(w.popitem())
+        while n< 11:
+            hit=HighHit()
+            hit.word=w.popitem()[0]
+            hit.search=s
+            hit.put()
+            n+=1
         top_ten=get_top_ten(tweets,word_dict)
-
+        test_x=1
         for tweet in top_ten:
             t=Tweet()
             t.text=tweet['text']
@@ -48,18 +58,24 @@ def action():
             t.from_user_name=tweet['from_user_name']
             t.created_at=tweet['created_at']
             t.location=tweet['geo']
-            t.key_word=key_word
             t.weight=tweet['quan']
             t.image=tweet['profile_image_url']
+            t.sentiment=sentiment(t.text)
             t.put()
-
-        q.filter('key_word',key_word)
-        q.order('-weight')
-        return result(tweets=q,key_word=key_word,high_hits=high_hits)
+            
+            for hit in s.highhit_set.run():
+                if hit.word in t.text.split():
+                    relation=HittoTweet()
+                    relation.tweet=t
+                    relation.highhit=hit
+                    relation.put()
+                test_x+=1
+#        q.filter('key_word',key_word)
+#        q.order('-weight')
+        return result(search=s,test_x=test_x)
     return '?'
 @app.route('/result')
-def result(tweets,key_word,high_hits):
-    if tweets:
-        return render_template('result.html',tweets=tweets,key_word=key_word,h=high_hits)
-    else:
-        return redirect(url_for('index'))
+def result(search,test_x):
+    p=search.highhit_set.run()
+    if p:
+        return render_template('result.html',h=p,test_x=test_x)

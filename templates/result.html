@@ -8,11 +8,15 @@
 <div class="page-header" >
   <h3>{{key_word}}</h3>
 </div>
-{{h}}
 <div class="span10">
-{% for tweet in tweets %}
-{{tweet.text}}<br/>
+{% for hit in h%}
+{{hit.word}}
+{% for r in hit.hittotweet_set.run() %}<br/>
+{{r.tweet.text}}:{{r.tweet.sentiment}}
+{% endfor %}</br>
+---------------------------------------------</br>
 {% endfor %}
+{{test_x}}
 </div>
 
 </div>
