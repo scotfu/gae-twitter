@@ -15,7 +15,7 @@
 {% for r in hit.hittotweet_set.run() %}
 User:{{r.tweet.from_user}}</br>
 Tweet:{{r.tweet.text}}</br>
-sentiment:{{r.tweet.sentiment}}</br>
+sentiment:{% if r.tweet.sentiment >0.1 -%}Positive {% elif -0.1<r.tweet.sentiment< 0.1 %} Netural {% else %} Negative {% endif %}</br>
 image:<image src="{{r.tweet.image}}"/></br>
 ------------</br>
 {% else %}
