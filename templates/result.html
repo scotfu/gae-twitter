@@ -10,13 +10,20 @@
 </div>
 <div class="span10">
 {% for hit in h%}
-{{hit.word}}
-{% for r in hit.hittotweet_set.run() %}<br/>
-{{r.tweet.text}}:{{r.tweet.sentiment}}
+{{hit.word}}<br>
+------------------------------------------------</br>
+{% for r in hit.hittotweet_set.run() %}
+User:{{r.tweet.from_user}}</br>
+Tweet:{{r.tweet.text}}</br>
+sentiment:{{r.tweet.sentiment}}</br>
+image:<image src="{{r.tweet.image}}"/></br>
+------------</br>
+{% else %}
+no popular tweets under this word</br>
+------------------------------------------------</br>
 {% endfor %}</br>
----------------------------------------------</br>
+
 {% endfor %}
-{{test_x}}
 </div>
 
 </div>

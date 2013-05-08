@@ -68,7 +68,7 @@ def search(key_word,location):
         try:
             tweets.extend(json.loads(urllib2.urlopen(TWITTER_URL+parameters).read())['results'])
             p+=1
-            time.sleep(0.000001)
+#            time.sleep(0.000001)
         except Exception,e:
 #            print e
             pass

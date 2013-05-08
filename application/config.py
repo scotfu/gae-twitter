@@ -11,12 +11,10 @@ class Config(object):
     RDS= True
     CLOUDFORNT = True
     S3=True
-class ProductionConfig(Config):
-    DATABASE_URI = 'mysql://%s@%s/%s' % ('fu','fupass','youtube')
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    PAGE = 300
+    PAGE = 15
 
 class TestingConfig(Config):
     TESTING = True

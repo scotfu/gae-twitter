@@ -32,16 +32,15 @@ def action():
         q.filter('key_word',key_word)
         q.filter('location',location)
         if q.count():
-            return result(q.get(),test_x=10000)
+            return result(q.get())
         s=Search()
         s.key_word=key_word
         s.location=location
         s.put()
-        
+
         tweets = search(key_word,location)    
         word_dict=count_word(tweets)
         w=word_dict
-#        print w
         n=0
         while n< 11:
             hit=HighHit()
@@ -50,7 +49,6 @@ def action():
             hit.put()
             n+=1
         top_ten=get_top_ten(tweets,word_dict)
-        test_x=1
         for tweet in top_ten:
             t=Tweet()
             t.text=tweet['text']
@@ -69,13 +67,12 @@ def action():
                     relation.tweet=t
                     relation.highhit=hit
                     relation.put()
-                test_x+=1
 #        q.filter('key_word',key_word)
 #        q.order('-weight')
-        return result(search=s,test_x=test_x)
+        return result(search=s)
     return '?'
 @app.route('/result')
-def result(search,test_x):
+def result(search):
     p=search.highhit_set.run()
     if p:
-        return render_template('result.html',h=p,test_x=test_x)
+        return render_template('result.html',h=p)
